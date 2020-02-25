@@ -64,7 +64,7 @@ include('includes/header.php');
 	</p>
 <p>
 				<?php if(isset($errors['address'])) echo $errors['address']."<br>"; ?> 
-				*Please enter your street address for delivery:<br>
+				*Please enter your street address:<br>
 				<input name="address" <?php if(isset($address)) echo "value=\"$address\"";?>>
 			</p>
 			
