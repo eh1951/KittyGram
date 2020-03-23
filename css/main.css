@@ -5,8 +5,14 @@ body {
 
 a {
 	text-decoration: none;
-	color: #FBE9DE;
+	color: #9732a8;
 	}
+#siteName a {
+	color: #000000;
+}
+#loginMenu a{
+	color: #ffffff;
+}
 #container {
 	display: grid;
 	grid-template-columns: 30% 40% 30%;
@@ -38,7 +44,7 @@ a {
 
 #loginMenu {
 	display: grid;
-    grid-template-columns: 50% 50%;
+    grid-template-columns: 1fr 1fr;
     grid-template-rows: 100%;
 	}
 
@@ -46,6 +52,7 @@ a {
 	background-color:#970094;
 	font-size: 1.5em;
 	grid-column-start: 1;
+	grid-column-end: 2;
 	text-align: center;
 	}
 	
@@ -53,8 +60,16 @@ a {
 	background-color: #970094;
 	font-size: 1.5em;
 	grid-column-start: 2;
+	grid-column-end: 3;
 	text-align: center;
 	}
+#home {
+	background-color: #970094;
+	font-size: 1.5em;
+	grid-column-start: 1;
+	grid-column-end: 2;
+	text-align: center;
+}
 
 #info {
 	position: relative;

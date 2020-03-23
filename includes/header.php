@@ -16,7 +16,8 @@
 
             <img id="logoLeft" src="./images/kitty.jpg" alt="cat logo">
             
-        <div id="siteName"><h1>KittyGram</h1></div>
+        <div id="siteName"><h1><a href="index.php">KittyGram</a></h1></div>
 
             <img id="logoRight" src="./images/kitty.jpg" alt="cat logo">
     </header>
+
