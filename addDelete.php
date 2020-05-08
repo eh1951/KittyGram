@@ -1,10 +1,7 @@
-
-
 <?php
 require_once '../../mysqli_connect.php';
 require_once '../secure_conn.php';
-
-include('includes/header.php');
+require 'includes/header.php';
 	if (isset($_POST['submit'])) {
 		if (!empty($_POST['fName']))
 			$fName = filter_var(trim($_POST['fName']), FILTER_SANITIZE_STRING);
@@ -54,17 +51,14 @@ include('includes/header.php');
 			}
 			else
 			mysqli_free_result($result);
-}
-			//Folder name is email stripped of non-alphanumeric characters
-			$folder = preg_replace("/[^a-zA-Z0-9]/", "", $email);
-			// make lowercase
-			$folder = strtolower($folder);
-			$stmt = $dbc->prepare("INSERT INTO KG_users (fName, lName, email, address, password, gender, folder)  VALUES (?, ?, ?, ?, ?, ?, ?)");
+}		
+			$type = "admin";
+			//$sql = "INSERT INTO KG_users (fName, lName, email, address, password, gender)  VALUES ('$fName', '$lName', '$email', '$address', '$password', '$gender')";
+			$stmt = $dbc->prepare("INSERT INTO KG_users (fName, lName, email, address, password, gender, type)  VALUES (?, ?, ?, ?, ?, ?, ?)");
 			$pass = password_hash($pass, PASSWORD_DEFAULT);
-			$stmt->bind_param("sssssss", $fName, $lName, $email, $address, $pass, $gender, $folder);
+			$stmt->bind_param("sssssss", $fName, $lName, $email, $address, $pass, $gender, $type);
+			$test = $stmt;
 			$stmt->execute();
-			$dirPath = "../../KG_uploads/".$folder;
-			mkdir($dirPath,0777);
 			$stmt->close();
 			//$result = mysqli_query($dbc, $sql);
 			//Form was filled out completely and submitted. Print the submitted information:
@@ -77,12 +71,62 @@ include('includes/header.php');
 	}
 ?>
 
+<?php //This is the login page for registered users
+//require_once '../secure_conn.php';
+if (isset($_POST['send'])) {
+	$errors = array();
+		if (!empty($_POST['emailDelete'])){
+			$valid_email = filter_var(trim($_POST['emailDelete']), FILTER_VALIDATE_EMAIL);
+			if (!$valid_email) 
+				$errors['invalid_email'] = "<span class=\"warn\">Invalid Email:</span>";
 
-<form method="POST" action="registration.php" autocomplete="off">
+			else
+				$emailDelete = filter_var($valid_email, FILTER_SANITIZE_EMAIL);//returns a string or null if empty or false if not valid	
+		}
+		else 
+			$errors['missing_email'] = "<span class=\"warn\">Missing Email:</span>";
+		if(!empty($_POST['password'])) 
+				$password = filter_var(trim($_POST['password']), FILTER_SANITIZE_STRING);	
+		else
+			$errors['pass'] = "<span class=\"warn\">Missing Password:</span>";
+
+	while (!$errors){ 
+		require_once ('../../mysqli_connect.php'); // Connect to the db.
+		// Make the query:
+		$sql = "SELECT fName, email, password, type FROM KG_users WHERE email = ?";
+		$stmt = mysqli_prepare($dbc, $sql);
+		mysqli_stmt_bind_param($stmt, 's', $emailDelete);
+		mysqli_stmt_execute($stmt);
+		$result=mysqli_stmt_get_result($stmt);
+		$rows = mysqli_num_rows($result);
+		mysqli_free_result($stmt);
+		if ($rows==0) 
+			$errors[] = 'no_email';
+		else { // email found, validate password
+			$result=mysqli_fetch_assoc($result); //convert the result object pointer to an associative array 
+			$pw_hash=$result['password'];
+			if (password_verify($password, $pw_hash )) { //passwords match
+				if ($result['type'] === 'admin'){
+					
+					$_SESSION['typeDelete'] = $result['type'];
+					$_SESSION['emailDelete'] = $emailDelete;
+					header('Location: adminDeleted.php');
+					exit;
+					}
+				
+
+			}
+			else {
+				$errors[]='password';
+			}
+		} 
+	   } // end while 	
+ }//end isset $_POST['send']
+?>
+
+<form method="POST" action="addDelete.php">
 <fieldset>
-<legend>User Registration</legend>
-
-
+<legend>Add an Admin</legend>
 <p><?php if(isset($errors['fName'])) echo $errors['fName'] . "<br>"; ?>
 	Please enter your first name<br>
 	<input name="fName" <?php if(isset($fName)) echo "value=\"$fName\"";?>>
@@ -104,12 +148,12 @@ include('includes/header.php');
 	<p>
 				<?php if(isset($errors['pass'])) echo $errors['pass']."<br>"; ?> 
 				*Please enter your password:<br>
-				<input type="password" name="pass">
+				<input type="password" name="pass" <?php if(isset($pass)) echo "value=\"$pass\"";?>>
 			</p>
 			
 			<p>
 				*Please enter your password again:<br>
-				<input type="password" name="passConf">
+				<input type="password" name="passConf" <?php if(isset($passConf)) echo "value=\"$passConf\"";?>>
 			</p>
 			
 		<p><?php if(isset($errors['gender'])) echo $errors['gender']."<br>";?>Gender: 
@@ -118,6 +162,35 @@ include('includes/header.php');
 			<label><input type="radio" name="gender" value="NA" <?php if(isset($gender) && $gender == "NA") echo " checked=\"checked\"";?>> Prefer not to answer</label>
 		</p>
 		<p><input type="submit" name="submit" value="register"></p>
-</fieldset>
-</form>
+
+
+       <form method="post" action="addDelete.php">
+			<fieldset>
+				<legend>Delete an Admin</legend>
+				<?php if ($errors) { ?>
+				<p class="warning">Please fix the item(s) indicated.</p>
+				<?php } ?>
+            <p>
+				
+                <label for="email">Please enter your email address:</label>
+				
+				<?php if(isset($errors['invalid_email'])) echo $errors['invalid_email'] . "<br>"; 	elseif(isset($errors['missing_email'])) echo $errors['missing_email'] . "<br>"; ?>
+
+                <input name="emailDelete" id="email" type="text"
+				<?php if (isset($emailDelete) && !$errors['missing_email']) {
+                    echo 'value="' . htmlspecialchars($emailDelete) . '"';
+                } ?>>
+            </p>
+			<p>
+				<?php if(isset($errors['pass'])) echo $errors['pass'] . "<br>"; ?>
+                <label for="pw">Password:</label> 
+                <input name="password" id="pw" type="password">
+            </p>
+			
+            <p>
+                <input name="send" type="submit" value="Delete Admin">
+            </p>
+		</fieldset>
+        </form>
+
 <?php include('includes/footer.php'); ?>

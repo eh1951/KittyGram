@@ -10,6 +10,22 @@ a {
 #siteName a {
 	color: #000000;
 }
+#adminMenu {
+	display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 100%;
+}
+#userMenu {
+	display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 100%;
+}
+#adminMenu a {
+	color: #ffffff;	
+}
+#userMenu a {
+	color: #ffffff;	
+}
 #loginMenu a{
 	color: #ffffff;
 }
@@ -27,6 +43,7 @@ a {
 	grid-column-start: 1;
 	grid-column-end: 2;
 	width: 20%;
+	min-width: 20;
 	height: auto;
 	}
 #logoRight {
@@ -63,11 +80,50 @@ a {
 	grid-column-end: 3;
 	text-align: center;
 	}
+
 #home {
+	background-color:#970094;
+	font-size: 1.5em;
+	grid-column-start: 1;
+	grid-column-end: 2;
+	text-align: center;
+}
+#uploadUser {
+	background-color: #970094;
+	font-size: 1.5em;
+	grid-column-start: 2;
+	grid-column-end: 3;
+	text-align: center;
+}
+#logout {
+	background-color: #970094;
+	font-size: 1.5em;
+	grid-column-start: 3;
+	grid-column-end: 4;
+	text-align: center;
+}
+
+#addDelete {
 	background-color: #970094;
 	font-size: 1.5em;
 	grid-column-start: 1;
 	grid-column-end: 2;
+	text-align: center;
+}
+
+#uploadAdmin {
+	background-color: #970094;
+	font-size: 1.5em;
+	grid-column-start: 2;
+	grid-column-end: 3;
+	text-align: center;
+}
+
+#adminLogout {
+	background-color: #970094;
+	font-size: 1.5em;
+	grid-column-start: 3;
+	grid-column-end: 4;
 	text-align: center;
 }
 

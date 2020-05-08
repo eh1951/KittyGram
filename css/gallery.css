@@ -1,0 +1,13 @@
+
+div#lazy-container {
+	margin: auto;
+    width: 800px;
+    height: 800px;
+    overflow: auto;
+}
+
+img.lazy {
+    width: 700px; 
+    height: 467px; 
+    display: block;
+}
