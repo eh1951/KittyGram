@@ -1,4 +1,4 @@
-<?php 
+                              <?php 
     include('includes/header.php'); 
 ?>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -21,7 +21,8 @@
             if (!substr($file, 0, 1) != '.') {
                 $image_size = getimagesize("$mainDir/$subDirectory/$file");
                 $image_name = basename($file);
-                
+                $user = str_replace("/","",dirname(substr($file, strpos($file, '/', 6))));
+                echo "<h3 class=\"lazy\">By $user</h3>";
                 $directory = dirname($file);
                 echo "<img class=\"lazy\" data-src=\"show_image.php?image=$image_name&imgLocation=$directory\"/>";
             }

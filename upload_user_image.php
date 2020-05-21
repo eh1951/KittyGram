@@ -14,10 +14,12 @@
 					$image_path = $_FILES['upload']['tmp_name'];
 					$image_info = getimagesize($image_path); 
 					if (move_uploaded_file ($_FILES['upload']['tmp_name'], "../../KG_uploads/$folder/{$_FILES['upload']['name']}")) {
+						$output = shell_exec("python cat_detector.py --image ../../KG_uploads/$folder/{$_FILES['upload']['name']}");
+						if ($output !=  0) {
+						echo $output;
 						echo '<h2>The file '.$_FILES['upload']['name'].' has been uploaded!</h2>';	
 						$name=$_FILES['upload']['name'];
 						$type=$_FILES['upload']['type'];
-						
 						//write to database
 						require_once ('../../mysqli_connect.php'); // Connect to the db.
 						$sql = "INSERT into KG_user_images (email, fileName, fileType) VALUES (?, ?, ?)";
@@ -39,6 +41,10 @@
 							unlink ($_FILES['upload']['tmp_name']);
 						}
 						exit;
+					} else {
+						unlink("../../KG_uploads/$folder/{$_FILES['upload']['name']}");
+						echo '<h2 class="warning">This image does not contain cats</h2>';
+					}
 					} // End of move... IF.		
 				} else { // Invalid type.
 					echo '<h2 class="warning">Please upload a GIF, JPEG or PNG image.</h2>';
