@@ -27,3 +27,4 @@
 
 <div id="wrapper">
     <?php require './includes/menu.php'; ?>
+</div>
